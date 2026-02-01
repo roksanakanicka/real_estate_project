@@ -29,10 +29,8 @@ apartments_sale.to_sql('apartments', connection, if_exists='replace', index=Fals
 connection.close()
 
 # wszystkie unikalne miasta
-cities = apartments_sale['city'].unique()
+cities = sorted(apartments_sale['city'].unique())
 print(cities)
 
 # ile ich jest
 print(f"Liczba unikalnych miast: {len(cities)}")
-cities = sorted(apartments_sale['city'].unique())
-print(cities)

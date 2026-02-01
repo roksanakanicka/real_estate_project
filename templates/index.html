@@ -17,34 +17,73 @@
 <h1>Wyszukiwarka mieszkań na sprzedaż</h1>
 
 <form method="POST">
-    Miasto: <input type="text" name="city"><br><br>
+    Miasto: 
+    <select name="city">
+        <option value="">Dowolne</option>
+        {% for city in cities %}
+            <option value="{{ city }}" {% if filters.get('city') == city %}selected{% endif %}>
+                {{ city_map[city] }}
+            </option>
+        {% endfor %}
+    </select>
+    <br><br>
 
-    Liczba pokoi: <input type="number" name="min_rooms" min="1"><br><br>
+    Minimalna liczba pokoi: 
+    <input type="number" name="min_rooms" min="1" step="1"
+    value="{{ filters.get('min_rooms','') }}">
+    <br><br>
+
 
     Metraż (m²): 
-    Od: <input type="number" name="min_square" min="20" max="200" value="50">
-    Do: <input type="number" name="max_square" min="20" max="200" value="100">
+    Od: <input type="number" name="min_square"
+    value="{{ filters.get('min_square',50) }}">
+
+    Do: <input type="number" name="max_square"
+    value="{{ filters.get('max_square',100) }}">
     <br><br>
 
-    Cena (PLN):
-    Od: <input type="number" name="min_price" min="50000" max="2000000" value="100000" step="10000">
-    Do: <input type="number" name="max_price" min="50000" max="2000000" value="500000" step="10000">
+
+    Cena:
+    Od: <input type="number" name="min_price"
+    value="{{ filters.get('min_price',100000) }}">
+
+    Do: <input type="number" name="max_price"
+    value="{{ filters.get('max_price',500000) }}">
     <br><br>
 
-    Minimalne piętro: <input type="number" name="min_floor"><br><br>
-    Maksymalna liczba pięter w budynku: <input type="number" name="max_floor_count"><br><br>
+    Minimalne piętro:
+    <input type="number" name="min_floor"
+    value="{{ filters.get('min_floor','') }}">
+    <br><br>
+
+    Maksymalna liczba pięter w budynku:
+    <input type="number" name="max_floor_count"
+    value="{{ filters.get('max_floor_count','') }}">
+    <br><br>
 
     Przedszkole w pobliżu: 
     <select name="kindergarten">
-        <option value="">Dowolne</option>
-        <option value="yes">Tak</option>
-    </select><br><br>
+        <option value="" {% if filters.get('kindergarten')=='' %}selected{% endif %}>
+            Dowolne
+        </option>
+
+        <option value="yes" {% if filters.get('kindergarten')=='yes' %}selected{% endif %}>
+            Tak
+        </option>
+    </select>
+    <br><br>
 
     Szkoła w pobliżu: 
     <select name="school">
-        <option value="">Dowolne</option>
-        <option value="yes">Tak</option>
-    </select><br><br>
+        <option value="" {% if filters.get('school')=='' %}selected{% endif %}>
+            Dowolne
+        </option>
+
+        <option value="yes" {% if filters.get('school')=='yes' %}selected{% endif %}>
+            Tak
+        </option>
+    </select>
+    <br><br>
 
     Balkon: 
     <select name="balcony">
@@ -58,6 +97,24 @@
         <option value="yes" {% if filters.get('elevator')=='yes' %}selected{% endif %}>Tak</option>
     </select><br><br>
 
+    Parking: 
+    <select name="parking">
+        <option value="" {% if filters.get('parking')=='' %}selected{% endif %}>Dowolne</option>
+        <option value="yes" {% if filters.get('parking')=='yes' %}selected{% endif %}>Tak</option>
+    </select><br><br>
+
+    Sortuj według: 
+    <select name="sort_by">
+        <option value="" {% if sort_by=='' %}selected{% endif %}>Brak</option>
+        <option value="rooms" {% if sort_by=='rooms' %}selected{% endif %}>Pokoje</option>
+        <option value="squareMeters" {% if sort_by=='squareMeters' %}selected{% endif %}>Metraż (m²)</option>
+        <option value="floor" {% if sort_by=='floor' %}selected{% endif %}>Piętro</option>
+        <option value="floorCount" {% if sort_by=='floorCount' %}selected{% endif %}>Liczba pięter</option>
+        <option value="price" {% if sort_by=='price' %}selected{% endif %}>Cena</option>
+        <option value="kindergartenDistance" {% if sort_by=='kindergartenDistance' %}selected{% endif %}>Przedszkole (km)</option>
+        <option value="schoolDistance" {% if sort_by=='schoolDistance' %}selected{% endif %}>Szkoła (km)</option>
+    </select>
+    <br><br>
 
     <input type="submit" value="Szukaj">
 </form>
@@ -70,24 +127,26 @@
         <th>Metraż (m²)</th>
         <th>Piętro</th>
         <th>Liczba pięter</th>
-        <th>Cena (PLN)</th>
+        <th>Cena</th>
         <th>Przedszkole (km)</th>
         <th>Szkoła (km)</th>
         <th>Balkon</th>
         <th>Winda</th>
+        <th>Parking</th>
     </tr>
     {% for row in results %}
     <tr>
-        <td>{{ row[1] }}</td> <!-- Miasto -->
-        <td>{{ row[4]|int }}</td> <!-- Pokoje -->
-        <td>{{ row[3]|round(2) }}</td> <!-- Metraż -->
-        <td>{{ row[5]|int }}</td> <!-- Piętro -->
-        <td>{{ row[6]|int }}</td> <!-- Liczba pięter -->
-        <td>{{ row[27]|int }}</td> <!-- Cena -->
-        <td>{{ row[15]|round(2) }}</td> <!-- Przedszkole -->
-        <td>{{ row[13]|round(2) }}</td> <!-- Szkoła -->
-        <td>{{ row[24] }}</td> <!-- Balkon -->
-        <td>{{ row[25] }}</td> <!-- Winda -->
+        <td>{{ city_map.get(row["city"], row["city"]) }}</td>
+        <td>{{ row["rooms"]|int }}</td>
+        <td>{{ "{:.2f}".format(row["squareMeters"]).replace('.',',') }}</td>
+        <td>{{ row["floor"]|int }}</td>
+        <td>{{ row["floorCount"]|int }}</td>
+        <td>{{ "{:,.0f}".format(row["price"]).replace(',', ' ') }} zł</td>
+        <td>{{ "{:.2f}".format(row["kindergartenDistance"]).replace('.',',') }} km</td>
+        <td>{{ "{:.2f}".format(row["schoolDistance"]).replace('.',',') }} km</td>
+        <td>{{ 'Tak' if row["hasBalcony"]=='yes' else 'Nie' }}</td>
+        <td>{{ 'Tak' if row["hasElevator"]=='yes' else 'Nie' }}</td>
+        <td>{{ 'Tak' if row["hasParkingSpace"]=='yes' else 'Nie' }}</td>
     </tr>
     {% endfor %}
 </table>
