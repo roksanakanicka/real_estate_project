@@ -99,4 +99,4 @@ python app.py
 ├── app.py                          # Flask routing, logika wyszukiwania
 │
 ├── apartments_sale.db              # baza SQLite (generowana przez data_prep.py)
-└── requirements.txt                # zależności Python
+└── requirements.txt
