@@ -62,26 +62,20 @@ GeoPandas łączy każde mieszkanie z dzielnicą na podstawie shapefiles Granice
 
 **27+ unikalnych cech** w bazie: rooms, squareMeters, price, floor, floorCount, buildYear, latitude, longitude, centreDistance, hasBalcony, hasElevator, hasParkingSpace, hasSecurity, hasStorageRoom, ownership, condition, buildingMaterial, type, schoolDistance, clinicDistance, kindergartenDistance, pharmacyDistance, restaurantDistance, collegeDistance, postOfficeDistance, district_name, document.
 
-## Instalacja
-
+## Uruchomienie
+1. Zainstaluj zależności:
 ```bash
 pip install -r requirements.txt
 ```
 
-## Uruchomienie
-
-1. Przygotowanie bazy danych:
-```bash
-python data_prep.py
-```
-
-2. Uruchomienie aplikacji:
+2. Uruchom aplikację:
 ```bash
 python app.py
 ```
 
 3. Otwórz http://localhost:5000
 
+**Uwaga:** Baza danych `apartments_sale.db` jest już w repo. Jeśli chcesz ją regenerować od zera, uruchom `python data_prep.py` (wymaga plików CSV z Kaggle i shapefiles).
 
 ## Architektura
 
